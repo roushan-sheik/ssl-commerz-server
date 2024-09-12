@@ -82,5 +82,20 @@ To get started with this project, follow these steps:
 
    The server will be available at `http://localhost:3000` (or your configured port).
 
----
+# Important thing
 
+Test Credit Card Account Numbers
+VISA
+Card Number: 4111111111111111
+Exp: 12/25
+CVV: 111
+Mastercard
+Card Number: 5111111111111111
+Exp: 12/25
+CVV: 111
+American Express
+Card Number: 371111111111111
+Exp: 12/25
+CVV: 111
+Mobile OTP
+111111 or 123456

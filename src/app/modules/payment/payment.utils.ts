@@ -1,3 +1,12 @@
+const SSLCommerzPayment = require("sslcommerz-lts");
+import dotenv from "dotenv";
+
+// config
+dotenv.config();
+const store_id = process.env.SSL_COMMERZ_STORE_ID;
+const store_passwd = process.env.SSL_COMMERZ_STORE_PASSWORD;
+const is_live = false; //true for live, false for sandbox
+
 export const initiatePayment = async (paymentData: any) => {
   const {
     transactionId,
@@ -12,9 +21,9 @@ export const initiatePayment = async (paymentData: any) => {
       total_amount: totalPrice,
       currency: "BDT",
       tran_id: transactionId, // use unique tran_id for each api call
-      success_url: "http://localhost:3030/success",
-      fail_url: "http://localhost:3030/fail",
-      cancel_url: "http://localhost:3030/cancel",
+      success_url: `http://localhost:8000/api/v1/payment/success/${transactionId}`,
+      fail_url: `http://localhost:8000/api/v1/payment/failed/${transactionId}`,
+      cancel_url: `http://localhost:8000/api/v1/payment/cancel/${transactionId}`,
       ipn_url: "http://localhost:3030/ipn",
       shipping_method: "Courier",
       product_name: "Computer.",
@@ -38,7 +47,22 @@ export const initiatePayment = async (paymentData: any) => {
       ship_postcode: 1000,
       ship_country: "Bangladesh",
     };
+    //   create ssl obj
+    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+    return sslcz.init(data).then((apiResponse: any) => {
+      // Redirect the user to payment gateway
+      return apiResponse;
+    });
   } catch (error) {
     throw new Error("payment initiate failed");
   }
+};
+//* verify payment utils ==========================================
+export const verifyPayment = async (transactionId: string) => {
+  const data = {
+    val_id: transactionId, //that you go from sslcommerz response
+  };
+  const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+  const response = sslcz.validate(data).then((data: any) => data);
+  return response;
 };
